@@ -23,9 +23,9 @@ deploy:
   only:
     - main
   script:
+    - echo $FTP_USER
     - apk add --no-cache lftp
     - lftp -u $FTP_USER,$FTP_PASSWORD sftp://$FTP_HOST -e "
         mirror --reverse --delete --verbose $DIST_DIR $REMOTE_PATH;
         bye
       "
-
