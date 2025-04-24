@@ -23,9 +23,9 @@ deploy:
   only:
     - main
   script:
-    - echo $FTP_USER
-    - apk add --no-cache lftp
-    - lftp -u $FTP_USER,$FTP_PASSWORD sftp://$FTP_HOST -e "
-        mirror --reverse --delete --verbose $DIST_DIR $REMOTE_PATH;
-        bye
-      "
+  - apk add --no-cache openssh
+  - mkdir -p ~/.ssh
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
+  - scp -r $DIST_DIR/* $SSH_USER@$SSH_HOST:$REMOTE_PATH/
