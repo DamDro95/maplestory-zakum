@@ -4,8 +4,8 @@ stages:
 
 variables:
   DIST_DIR: dist
-  REMOTE_HOST: $SERVER_IP_ADDRESS
-  REMOTE_USER: $SERVER_USER
+  REMOTE_HOST: $SSH_HOST
+  REMOTE_USER: $SSH_USER
   REMOTE_PATH: public_html/game-dev
 
 before_script:
@@ -32,6 +32,6 @@ deploy:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan $REMOTE_HOST >> ~/.ssh/known_hosts
-    - rsync -avz --delete $DIST_DIR/ $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH/
+    - ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
+    - rsync -avz --delete $DIST_DIR/ $SSH_USER@$SSH_HOST:$REMOTE_PATH/
 
