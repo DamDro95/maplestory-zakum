@@ -35,6 +35,7 @@ export default class Level extends Scene{
     const rightPlatformMiddle = new Platform( this, 6, 1, 1, new Vector3( 16, 5, 0 ) );
     const rightPlatformTop = new Platform( this, 6, 1, 1, new Vector3( 12, 8, 0 ) );
 
+    // Enemies
     const zakum = new Zakum();
   }
 }
