@@ -9,7 +9,7 @@ export default class Character{
     this.scene = scene;
     this.player = CreateBox( 'player', { height: 2, width: 1, depth: 1 }, scene );
 
-    ImportMeshAsync( '/game-dev/player-projectile.stl', scene ).then( result => {
+    ImportMeshAsync( '/maplestory-zakum/player-projectile.stl', scene ).then( result => {
       this.projectile = result.meshes[0];
       this.projectile.scaling = new Vector3( 0.4, 0.4, 0.4 );
       this.projectile.setEnabled( false );
