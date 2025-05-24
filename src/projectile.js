@@ -1,9 +1,18 @@
-import { MeshBuilder, Vector3, PhysicsAggregate, PhysicsShapeType, PhysicsBody, PhysicsShape, PhysicsMotionType } from "@babylonjs/core";
+import { 
+  MeshBuilder, 
+  Vector3, 
+  PhysicsAggregate, 
+  PhysicsShapeType, 
+  PhysicsBody, 
+  PhysicsShape, 
+  PhysicsMotionType,
+} from "@babylonjs/core";
 import $ from 'jquery';
 
 export default class Projectile {
-  constructor( scene, start, destination ) {
-    this.projectile = MeshBuilder.CreateSphere( 'projectile', { diameter: 0.5 }, scene );
+  constructor( projectile, scene, start, destination ) {
+    this.projectile = projectile;
+    this.projectile.setEnabled( true );
 
     start.z = 1;
     destination.z = 1;

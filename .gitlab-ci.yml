@@ -4,7 +4,7 @@ stages:
 
 variables:
   DIST_DIR: dist
-  REMOTE_PATH: public_html/game-dev
+  REMOTE_PATH: public_html/maplestory-zakum
 
 build:
   stage: build

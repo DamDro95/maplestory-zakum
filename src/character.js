@@ -1,6 +1,7 @@
-import { CreateBox, Vector3, Ray, PhysicsAggregate, PhysicsShapeType } from '@babylonjs/core';
+import { ImportMeshAsync, CreateBox, Vector3, Ray, PhysicsAggregate, PhysicsShapeType } from '@babylonjs/core';
 import $ from 'jquery';
 import Projectile from './projectile.js';
+import '@babylonjs/loaders/STL/stlFileLoader';
 
 export default class Character{
 
@@ -8,8 +9,14 @@ export default class Character{
     this.scene = scene;
     this.player = CreateBox( 'player', { height: 2, width: 1, depth: 1 }, scene );
 
-    this.player.position.y = 1;
-    this.player.position.x = -9;
+    ImportMeshAsync( '/game-dev/player-projectile.stl', scene ).then( result => {
+      this.projectile = result.meshes[0];
+      this.projectile.scaling = new Vector3( 0.4, 0.4, 0.4 );
+      this.projectile.setEnabled( false );
+    });
+
+    this.player.position.y = 5;
+    this.player.position.x = -20;
    
     this.playerAggregate = new PhysicsAggregate( this.player, PhysicsShapeType.BOX, { mass: 1 }, scene );
     this.playerAggregate.body.setAngularDamping( 1 ); 
@@ -82,6 +89,6 @@ export default class Character{
   }
 
   shoot( targetPosition ){
-    const projectile = new Projectile( this.scene, this.player.position.clone(), targetPosition  );
+    const projectile = new Projectile( this.projectile.clone(), this.scene, this.player.position.clone(), targetPosition  );
   }
 }
