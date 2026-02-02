@@ -2,29 +2,35 @@ name: Build & Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node JS build
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      - run: npm ci
-      - run: npm run build
+      - name: Install Node dependencies
+        run: npm ci
 
-      - name: SFTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4 
-        with:
-          server: ${{ secrets.HOSTINGER_HOST }}
-          username: ${{ secrets.HOSTINGER_USER }}
-          password: ${{ secrets.HOSTINGER_SSH_KEY }}
-          server-dir: public_html/maplestory-zakem/
-          local-dir: './dist/' 
-          sftp: true
+      - name : Build Node JS
+        run: npm run build
+
+      # - name: SFTP Deploy
+      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4 
+      #   with:
+      #     server: ${{ secrets.HOSTINGER_HOST }}
+      #     username: ${{ secrets.HOSTINGER_USER }}
+      #     password: ${{ secrets.HOSTINGER_SSH_KEY }}
+      #     server-dir: public_html/maplestory-zakem/
+      #     local-dir: './dist/' 
+      #     sftp: true
