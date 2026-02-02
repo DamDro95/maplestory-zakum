@@ -1,0 +1,41 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Deploy via SFTP
+        env:
+          SFTP_HOST: ${{ secrets.HOSTINGER_HOST }}
+          SFTP_USER: ${{ secrets.HOSTINGER_USER }}
+          SFTP_KEY:  ${{ secrets.HOSTINGER_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SFTP_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H $SFTP_HOST >> ~/.ssh/known_hosts
+
+          lftp -u "$SFTP_USER" sftp://$SFTP_HOST <<EOF
+          set sftp:auto-confirm yes
+          mirror -R --delete --verbose --parallel=5 dist public_html/maplestory-zakem
+          bye
+          EOF
+
