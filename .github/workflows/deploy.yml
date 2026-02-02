@@ -15,17 +15,16 @@ jobs:
         with:
           node-version: 20
           cache: npm
+
       - run: npm ci
       - run: npm run build
 
-      - name: Deploy via SFTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4 # A popular action that also supports SFTP
+      - name: SFTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4 
         with:
           server: ${{ secrets.HOSTINGER_HOST }}
           username: ${{ secrets.HOSTINGER_USER }}
           password: ${{ secrets.HOSTINGER_SSH_KEY }}
-          server-dir: public_html/maplestory-zakem
-          # The local directory to upload, usually where your build artifacts are
-          local-dir: './dist/' # Replace 'dist' with your actual build output folder
-          # Set this to true if your server only accepts SFTP
+          server-dir: public_html/maplestory-zakem/
+          local-dir: './dist/' 
           sftp: true
