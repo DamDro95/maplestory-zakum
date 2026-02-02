@@ -2,11 +2,15 @@ name: Build & Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -14,18 +18,63 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+      
       - run: npm ci
-      - run: npm run build
 
-      - name: Deploy via SFTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4 # A popular action that also supports SFTP
-        with:
-          server: ${{ secrets.HOSTINGER_HOST }}
-          username: ${{ secrets.HOSTINGER_USER }}
-          password: ${{ secrets.HOSTINGER_SSH_KEY }}
-          server-dir: public_html/maplestory-zakem
-          # The local directory to upload, usually where your build artifacts are
-          local-dir: './dist/' # Replace 'dist' with your actual build output folder
-          # Set this to true if your server only accepts SFTP
-          sftp: true
+      - run: npm run build
+ 
+      - name: Push
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: build # The branch name where you want to push the assets
+          FOLDER: dist # The directory where your assets are generated
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MESSAGE: "Build: ({sha}) {msg}" # The commit message
+
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: dist
+      #     path: dist
+
+
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: dist
+  #         path: dist
+  #
+  #     - name: Install lftp
+  #       run: sudo apt-get update && sudo apt-get install -y lftp
+  #
+  #     - name: Test SFTP connectivity
+  #       run: |
+  #         echo "Testing TCP connection to $SFTP_HOST:$SFTP_PORT..."
+  #         nc -vz $SFTP_HOST $SFTP_PORT || { echo "Host not reachable"; exit 1; }
+  #
+  #     - name: Deploy via SFTP
+  #       env:
+  #         SFTP_HOST: ${{ secrets.HOST }}
+  #         SFTP_PORT: ${{ secrets.PORT }}
+  #         SFTP_USER: ${{ secrets.USER }}
+  #         SFTP_KEY:  ${{ secrets.SSH_KEY }}
+  #         SFTP_PATH: ${{ secrets.PATH }}
+  #       run: |
+  #         set -e
+  #         echo "Checking connectivity to $SFTP_HOST:$SFTP_PORT..."
+  #         nslookup "$SFTP_HOST" || { echo "Host not reachable"; exit 1; }
+  #
+  #         echo "level 1"
+  #         mkdir -p ~/.ssh
+  #         echo "$SFTP_KEY" > ~/.ssh/id_ed25519
+  #         chmod 600 ~/.ssh/id_ed25519
+  #         ssh-keyscan -H $SFTP_HOST >> ~/.ssh/known_hosts
+  #
+  #         echo "level 2"
+  #         lftp -u "$SFTP_USER" sftp://$SFTP_HOST:$SFTP_PORT  <<EOF
+  #         set sftp:auto-confirm yes
+  #         mirror -R --delete --verbose dist "$SFTP_PATH"
+  #         EOF
