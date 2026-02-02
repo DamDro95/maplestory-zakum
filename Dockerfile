@@ -12,7 +12,7 @@ RUN npm ci
 COPY . .
 
 # App port (change if needed)
-EXPOSE 3000
+EXPOSE 5173
 
 # Default command
 CMD [ "npm", "start" ]
