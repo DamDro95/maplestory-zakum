@@ -41,7 +41,7 @@ jobs:
       - name: Deploy via SFTP
         env:
           SFTP_HOST: ${{ secrets.HOST }}
-          SFTP_PORT: ${{ secerets.PORT }}
+          SFTP_PORT: ${{ secrets.PORT }}
           SFTP_USER: ${{ secrets.USER }}
           SFTP_KEY:  ${{ secrets.SSH_KEY }}
           SFTP_PATH:  ${{ secrets.PATH }}
