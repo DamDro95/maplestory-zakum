@@ -19,10 +19,8 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Install Node dependencies
         run: npm ci
 
-      - name : Build Node JS
         run: npm run build
 
       - name: Deploy
