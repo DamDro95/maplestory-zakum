@@ -10,11 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node JS build
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
       
@@ -22,8 +20,7 @@ jobs:
 
       - run: npm run build
 
-      - name: Deploy
-        uses: Burnett01/rsync-deployments@7.0.0
+      - uses: Burnett01/rsync-deployments@7.0.0
         with:
           switches: -avz --delete
           path: ./dist/
