@@ -46,6 +46,9 @@ jobs:
           SFTP_KEY:  ${{ secrets.SSH_KEY }}
           SFTP_PATH:  ${{ secrets.PATH }}
         run: |
+          echo $SFTP_HOST
+          echo $SFTP_PORT
+          echo $SFTP_PATH
           mkdir -p ~/.ssh
           echo "$SFTP_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
