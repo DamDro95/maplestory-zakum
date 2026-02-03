@@ -38,6 +38,11 @@ jobs:
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp
 
+      - name: Test SFTP connectivity
+        run: |
+          echo "Testing TCP connection to $SFTP_HOST:$SFTP_PORT..."
+          nc -vz $SFTP_HOST $SFTP_PORT || { echo "Host not reachable"; exit 1; }
+
       - name: Deploy via SFTP
         env:
           SFTP_HOST: ${{ secrets.HOST }}
