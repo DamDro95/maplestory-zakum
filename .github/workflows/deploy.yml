@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +23,10 @@ jobs:
       - name: Install lftp
         run: sudo apt-get install -y lftp
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy via SFTP
         env:
           SFTP_HOST: ${{ secrets.HOST }}
