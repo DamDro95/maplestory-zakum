@@ -20,12 +20,22 @@ jobs:
 
       - run: npm run build
 
-      # - uses: Burnett01/rsync-deployments@7.0.0
-      #   with:
-      #     switches: -avz --delete
-      #     path: ./dist/
-      #     remote_path: ${{ secrets.PATH }}
-      #     remote_host: ${{ secrets.HOST }}
-      #     remote_port: ${{ secrets.PORT }}
-      #     remote_user: ${{ secrets.USER }}
-      #     remote_key: ${{ secrets.SSH_KEY }}
+      - name: Install lftp
+        run: sudo apt-get install -y lftp
+
+      - name: Deploy via SFTP
+        env:
+          SFTP_HOST: ${{ secrets.HOST }}
+          SFTP_USER: ${{ secrets.USER }}
+          SFTP_KEY:  ${{ secrets.SSH_KEY }}
+          SFTP_PATH:  ${{ secrets.PATH }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SFTP_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H $SFTP_HOST >> ~/.ssh/known_hosts
+
+          lftp -u "$SFTP_USER" sftp://$SFTP_HOST <<EOF
+          set sftp:auto-confirm yes
+          mirror -R --delete --verbose dist "$SFTP_PATH"
+          EOF
