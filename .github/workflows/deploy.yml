@@ -44,13 +44,19 @@ jobs:
           SFTP_PORT: ${{ secrets.PORT }}
           SFTP_USER: ${{ secrets.USER }}
           SFTP_KEY:  ${{ secrets.SSH_KEY }}
-          SFTP_PATH:  ${{ secrets.PATH }}
+          SFTP_PATH: ${{ secrets.PATH }}
         run: |
+          set -e
+          echo "Checking connectivity to $SFTP_HOST:$SFTP_PORT..."
+          nslookup "$SFTP_HOST" || { echo "Host not reachable"; exit 1; }
+
+          echo "level 1"
           mkdir -p ~/.ssh
           echo "$SFTP_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H $SFTP_HOST >> ~/.ssh/known_hosts
 
+          echo "level 2"
           lftp -u "$SFTP_USER" sftp://$SFTP_HOST:$SFTP_PORT  <<EOF
           set sftp:auto-confirm yes
           mirror -R --delete --verbose dist "$SFTP_PATH"
