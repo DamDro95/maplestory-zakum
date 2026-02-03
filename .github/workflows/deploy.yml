@@ -25,7 +25,17 @@ jobs:
       - name : Build Node JS
         run: npm run build
 
-      # - name: SFTP Deploy
+      - name: Deploy
+        uses: Burnett01/rsync-deployments@7.0.0
+        with:
+          switches: -avz --delete
+          path: ./dist/
+          remote_path: ${{ secrets.PATH }}
+          remote_host: ${{ secrets.HOST }}
+          remote_port: ${{ secrets.PORT }}
+          remote_user: ${{ secrets.USER }}
+          remote_key: ${{ secrets.SSH_KEY }}
+          
       #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4 
       #   with:
       #     server: ${{ secrets.HOSTINGER_HOST }}
