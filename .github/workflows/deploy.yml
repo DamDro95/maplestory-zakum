@@ -46,9 +46,10 @@ jobs:
           SFTP_KEY:  ${{ secrets.SSH_KEY }}
           SFTP_PATH:  ${{ secrets.PATH }}
         run: |
-          echo $SFTP_HOST
-          echo $SFTP_PORT
-          echo $SFTP_PATH
+          echo "test"
+          echo "$SFTP_HOST"
+          echo "$SFTP_PORT"
+          echo "$SFTP_PATH"
        
 
       - name: Deploy via SFTP
